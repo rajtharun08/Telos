@@ -252,3 +252,37 @@ To secure transactions:
    - `Rental Fee` is transferred to Lender's `earned_balance`.
 3. **On Overdue/Late Returns**:
    - A Spring Boot scheduler identifies overdue leases, marks the transaction as `OVERDUE`, generates a record in the `penalties` table, and automatically moves the penalty amount from the Borrower's locked deposit to the Lender's earnings.
+
+---
+
+## 5. Mode-Specific Business Logic Flow
+
+The following describes how the database state and wallets operate under each transaction mode.
+
+### 5.1. Rent Mode
+* **Parameters**: User lists item with daily/hourly rate (`price`) and a `security_deposit`.
+* **Request Flow**: 
+  - Calculated cost = `(rate * duration) + security_deposit`.
+  - Borrower's `available_balance` is debited; `locked_balance` is credited.
+* **Pickup Flow**: Validated via QR scan. Transaction state updates to `ACTIVE`.
+* **Return Flow**: Validated via return QR scan. 
+  - `security_deposit` returns to borrower (`locked_balance` debited $\rightarrow$ `available_balance` credited).
+  - `rental fee` goes to lender (`locked_balance` debited $\rightarrow$ lender's `earned_balance` credited).
+* **Penalty Flow**: If return is late, Spring Boot scheduler calculates penalty fees daily and transfers them from borrower's locked deposit to lender's `earned_balance`.
+
+### 5.2. Borrow Mode
+* **Parameters**: User lists item with `price = 0` (free/community share) but still sets a `security_deposit` to protect the physical asset.
+* **Request Flow**: Only the `security_deposit` is locked in escrow from the borrower's wallet.
+* **Pickup/Return Flow**: Follows standard active state machine.
+* **Return Flow**: Upon return QR validation, the locked `security_deposit` is fully returned to the borrower's available balance.
+* **Penalty Flow**: Late returns still trigger a cron penalty which deducts penalty fees from the locked security deposit.
+
+### 5.3. Buy/Sell Mode
+* **Parameters**: User lists item for permanent ownership transfer at a set `price`. `security_deposit` is unused (`0`).
+* **Request Flow**: The full transaction price is debited from the buyer's `available_balance` and stored in `locked_balance` (escrow).
+* **Delivery/Pickup Flow**: The buyer scans the seller's QR code to verify they received the physical item.
+* **Settlement**: 
+  - Transaction state moves directly to `RETURNED`/`COMPLETED`.
+  - The item's availability status changes to `RETURNED` (or an inactive `SOLD` state) so it is removed from radial search engines.
+  - The locked price is immediately transferred to the seller's `earned_balance` (`locked_balance` debited $\rightarrow$ seller's `earned_balance` credited).
+  - No end-dates, late fees, or return flows apply.
