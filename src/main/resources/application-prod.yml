@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    url: ${TELOS_DB_URL}
+    username: ${TELOS_DB_USER}
+    password: ${TELOS_DB_PASSWORD}
+
+# Production must never inherit the known development signing key or origins.
+telos:
+  jwt:
+    secret: ${TELOS_JWT_SECRET}
+    ttl-seconds: ${TELOS_JWT_TTL_SECONDS:3600}
+  cors:
+    allowed-origins: ${TELOS_CORS_ORIGINS}

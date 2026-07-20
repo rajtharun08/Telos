@@ -1,0 +1,19 @@
+spring:
+  datasource:
+    url: ${TELOS_TEST_DB_URL:jdbc:postgresql://localhost:5433/telos_test}
+    username: ${TELOS_DB_USER:telos}
+    password: ${TELOS_DB_PASSWORD:telos}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+    clean-disabled: false
+    locations: classpath:db/migration
+
+telos:
+  jwt:
+    secret: telos-test-secret-0123456789-0123456789-0123456789
+    ttl-seconds: 3600
+  cors:
+    allowed-origins: http://localhost:5173

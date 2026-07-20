@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(micromamba run *)",
+      "Bash(which mvn *)",
+      "Bash(where java *)",
+      "Bash(where mvn *)",
+      "Read(//d//**)",
+      "Read(//c/Users/irfae/**)"
+    ]
+  }
+}

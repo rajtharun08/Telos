@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${TELOS_DB_URL:jdbc:postgresql://localhost:5433/telos}
+    username: ${TELOS_DB_USER:telos}
+    password: ${TELOS_DB_PASSWORD:telos}
+
+telos:
+  jwt:
+    secret: ${TELOS_JWT_SECRET:telos-dev-secret-please-change-in-production-0123456789}
+    ttl-seconds: ${TELOS_JWT_TTL_SECONDS:86400}
+  cors:
+    allowed-origins: ${TELOS_CORS_ORIGINS:http://localhost:5173,http://localhost:4173}
