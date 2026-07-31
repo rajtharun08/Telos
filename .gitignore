@@ -3,7 +3,6 @@ logs
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
@@ -35,9 +34,8 @@ bower_components
 # node-modules
 node_modules/
 jspm_packages/
-
-# Snowpack dependency directory
-web_modules/
+frontend/node_modules/
+frontend/dist/
 
 # TypeScript cache
 *.tsbuildinfo
@@ -82,26 +80,6 @@ out
 .nuxt
 dist
 
-# Gatsby files
-.cache/
-# Comment in the public line if your project uses Gatsby and you want to debug the site locally
-# public
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless Webpack templates/files
-.serverless/
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# Tern JS port file
-.tern-port
-
 # Stores VSCode versions templates and settings
 .vscode/*
 !.vscode/settings.json
@@ -110,6 +88,13 @@ dist
 !.vscode/extensions.json
 !.vscode/gdb-targets.json
 !.vscode/c_cpp_properties.json
+
+# Maven, Eclipse & IDE build artifacts
+target/
+bin/
+.classpath
+.project
+.settings/
 
 # OS metadata
 .DS_Store
