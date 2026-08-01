@@ -29,6 +29,9 @@ export const ChatDrawer = ({
   const { user } = useAuth();
   const { addToast } = useToast();
 
+  const userName = user?.name || 'Guest User';
+  const firstName = userName.split(' ')[0];
+
   // Active Conversations List
   const [conversations, setConversations] = useState([
     {
@@ -63,12 +66,12 @@ export const ChatDrawer = ({
       {
         id: 1,
         sender: 'Vikram Malhotra',
-        text: `Hi ${user.name.split(' ')[0]}! Yes, the Bosch Drill Kit is fully charged and ready for pickup near Indiranagar 100ft Rd.`,
+        text: `Hi ${firstName}! Yes, the Bosch Drill Kit is fully charged and ready for pickup near Indiranagar 100ft Rd.`,
         time: '10:15 AM'
       },
       {
         id: 2,
-        sender: user.name,
+        sender: userName,
         text: 'Awesome! I submitted the rental request with escrow lock. Can I pick it up at 4 PM today?',
         time: '10:18 AM'
       },
@@ -83,7 +86,7 @@ export const ChatDrawer = ({
       {
         id: 101,
         sender: 'Ananya Iyer',
-        text: 'Hi Aliya, is the Sony Camera available for this coming weekend?',
+        text: `Hi ${firstName}, is the Sony Camera available for this coming weekend?`,
         time: 'Yesterday'
       }
     ]
@@ -104,7 +107,7 @@ export const ChatDrawer = ({
 
     const newMsg = {
       id: Date.now(),
-      sender: user.name,
+      sender: userName,
       text: msgText,
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     };
@@ -247,7 +250,7 @@ export const ChatDrawer = ({
               </div>
 
               {currentMessages.map((msg) => {
-                const isMe = msg.sender === user.name;
+                const isMe = msg.sender === userName;
                 return (
                   <div
                     key={msg.id}
