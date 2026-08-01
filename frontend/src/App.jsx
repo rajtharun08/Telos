@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { Footer } from './components/layout/Footer';
@@ -19,14 +19,17 @@ import { SupportPage } from './pages/SupportPage';
 
 export default function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const location = useLocation();
+
+  const isLoginPage = location.pathname === '/login';
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white">
-      {/* Top PWA Installation Banner */}
-      <PwaInstallBanner />
+      {/* Top PWA Installation Banner (Hidden on standalone login page) */}
+      {!isLoginPage && <PwaInstallBanner />}
 
-      {/* Main Navigation Header */}
-      <Navbar onOpenChat={() => setIsChatOpen(true)} />
+      {/* Main Navigation Header (Hidden on standalone login page) */}
+      {!isLoginPage && <Navbar onOpenChat={() => setIsChatOpen(true)} />}
 
       {/* Main Page Body */}
       <main className="flex-1">
@@ -92,9 +95,9 @@ export default function App() {
         itemTitle="Bosch Cordless Drill"
       />
 
-      {/* Navigation & Footer */}
-      <MobileBottomNav />
-      <Footer />
+      {/* Navigation & Footer (Hidden on standalone login page) */}
+      {!isLoginPage && <MobileBottomNav />}
+      {!isLoginPage && <Footer />}
     </div>
   );
 }
