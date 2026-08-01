@@ -23,7 +23,8 @@ import {
   Smartphone,
   CheckCircle2,
   LogOut,
-  LogIn
+  LogIn,
+  HelpCircle
 } from 'lucide-react';
 
 export const Navbar = ({ onOpenFilterSheet, onOpenChat }) => {
@@ -73,12 +74,20 @@ export const Navbar = ({ onOpenFilterSheet, onOpenChat }) => {
             title="Click to adjust your neighborhood pickup location"
           >
             <MapPin className="w-3 h-3 text-forest-600 shrink-0" />
-            <span className="truncate max-w-[85px] sm:max-w-[180px]">{(user?.neighborhood || 'HSR LAYOUT').toUpperCase()}</span>
+            <span className="truncate max-w-[80px] sm:max-w-[180px]">{(user?.neighborhood || 'HSR LAYOUT').toUpperCase()}</span>
             <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
           </button>
 
-          {/* Mobile Right Controls: Chat & Theme Switcher */}
+          {/* Mobile Right Controls: Support, Chat, Theme Switcher, & Sign Out */}
           <div className="flex md:hidden items-center gap-1 shrink-0">
+            <Link
+              to="/support"
+              className="p-1.5 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Customer Support & FAQ"
+            >
+              <HelpCircle className="w-3.5 h-3.5 text-forest-600 dark:text-emerald-400" />
+            </Link>
+
             <button
               onClick={onOpenChat}
               className="p-1.5 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer relative"
@@ -95,6 +104,27 @@ export const Navbar = ({ onOpenFilterSheet, onOpenChat }) => {
             >
               {theme === 'light' ? <Moon className="w-3.5 h-3.5 text-indigo-600" /> : <Sun className="w-3.5 h-3.5 text-amber-400" />}
             </button>
+
+            {isAuthenticated ? (
+              <button
+                onClick={() => {
+                  logout();
+                  navigate('/login');
+                }}
+                className="p-1.5 rounded-full bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 hover:bg-rose-100 transition-colors cursor-pointer"
+                title="Sign Out"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="p-1.5 rounded-full bg-forest-600 text-white hover:bg-forest-500 transition-colors cursor-pointer"
+                title="Sign In"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+              </Link>
+            )}
           </div>
         </div>
 
@@ -123,6 +153,15 @@ export const Navbar = ({ onOpenFilterSheet, onOpenChat }) => {
         {/* Right Actions Toolbar (Desktop Only) */}
         <div className="hidden md:flex items-center gap-3">
           
+          {/* Customer Support & FAQ Trigger */}
+          <Link
+            to="/support"
+            className="p-2.5 rounded-full bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+            title="Customer Support & FAQ Center"
+          >
+            <HelpCircle className="w-4 h-4 text-forest-600 dark:text-emerald-400" />
+          </Link>
+
           {/* Direct Messaging Chat Trigger */}
           <button
             onClick={onOpenChat}
