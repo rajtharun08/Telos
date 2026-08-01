@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 import { DEMO_USERS } from '../api/mockData';
 import { setAuthToken, removeAuthToken } from '../api/client';
 
@@ -6,12 +6,9 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const savedId = localStorage.getItem('telos_user_id');
-    if (!savedId) return null; // Unauthenticated guest by default
-    return DEMO_USERS.find((u) => u.id === savedId) || null;
+    const savedId = localStorage.getItem('telos_user_id') || 'u-001';
+    return DEMO_USERS.find((u) => u.id === savedId) || DEMO_USERS[0];
   });
-
-  const isAuthenticated = !!user;
 
   const switchUser = (userId) => {
     const found = DEMO_USERS.find((u) => u.id === userId);
@@ -31,38 +28,18 @@ export const AuthProvider = ({ children }) => {
     return target;
   };
 
-  // Firebase Auth Integration Seam
-  const loginWithFirebase = async (email, password) => {
-    // In production with Firebase SDK initialized:
-    // const cred = await signInWithEmailAndPassword(auth, email, password);
-    // const idToken = await cred.user.getIdToken();
-    // setAuthToken(idToken);
-    return login(email, password);
-  };
-
-  const loginWithGoogle = async () => {
-    // In production with Firebase SDK:
-    // const provider = new GoogleAuthProvider();
-    // const res = await signInWithPopup(auth, provider);
-    // setAuthToken(await res.user.getIdToken());
-    return login('aliya.rahman@telos.app', 'demo1234');
-  };
-
   const logout = () => {
     removeAuthToken();
     localStorage.removeItem('telos_user_id');
-    setUser(null);
+    setUser(DEMO_USERS[0]);
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isAuthenticated,
         switchUser,
         login,
-        loginWithFirebase,
-        loginWithGoogle,
         logout,
         demoUsers: DEMO_USERS
       }}

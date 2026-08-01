@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Navbar } from './components/layout/Navbar';
 import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { Footer } from './components/layout/Footer';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { ChatDrawer } from './components/chat/ChatDrawer';
-import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 import { ExplorePage } from './pages/ExplorePage';
 import { ItemDetailPage } from './pages/ItemDetailPage';
@@ -19,17 +18,14 @@ import { SupportPage } from './pages/SupportPage';
 
 export default function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const location = useLocation();
-
-  const isLoginPage = location.pathname === '/login';
 
   return (
     <div className="flex flex-col min-h-screen bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-sans antialiased selection:bg-emerald-500 selection:text-white">
-      {/* Top PWA Installation Banner (Hidden on standalone login page) */}
-      {!isLoginPage && <PwaInstallBanner />}
+      {/* Top PWA Installation Banner */}
+      <PwaInstallBanner />
 
-      {/* Main Navigation Header (Hidden on standalone login page) */}
-      {!isLoginPage && <Navbar onOpenChat={() => setIsChatOpen(true)} />}
+      {/* Main Navigation Header */}
+      <Navbar onOpenChat={() => setIsChatOpen(true)} />
 
       {/* Main Page Body */}
       <main className="flex-1">
@@ -38,51 +34,13 @@ export default function App() {
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/search" element={<Navigate to="/explore" replace />} />
           <Route path="/items/:id" element={<ItemDetailPage />} />
+          <Route path="/create-item" element={<CreateItemPage />} />
+          <Route path="/transactions" element={<TransactionsPage />} />
+          <Route path="/wallet" element={<WalletPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/admin" element={<AdminPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/support" element={<SupportPage />} />
-
-          {/* Protected Routes — Redirect to /login if unauthenticated */}
-          <Route
-            path="/create-item"
-            element={
-              <ProtectedRoute>
-                <CreateItemPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/transactions"
-            element={
-              <ProtectedRoute>
-                <TransactionsPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/wallet"
-            element={
-              <ProtectedRoute>
-                <WalletPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <ProfilePage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <ProtectedRoute>
-                <AdminPage />
-              </ProtectedRoute>
-            }
-          />
-
           <Route path="*" element={<Navigate to="/explore" replace />} />
         </Routes>
       </main>
@@ -95,9 +53,9 @@ export default function App() {
         itemTitle="Bosch Cordless Drill"
       />
 
-      {/* Navigation & Footer (Hidden on standalone login page) */}
-      {!isLoginPage && <MobileBottomNav />}
-      {!isLoginPage && <Footer />}
+      {/* Navigation & Footer */}
+      <MobileBottomNav />
+      <Footer />
     </div>
   );
 }
