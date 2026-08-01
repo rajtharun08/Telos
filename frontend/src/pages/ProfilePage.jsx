@@ -7,6 +7,7 @@ import { ItemDetailModal } from '../components/items/ItemDetailModal';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import { apiFetch } from '../api/client';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   User,
   ShieldCheck,
@@ -20,12 +21,16 @@ import {
   Clock,
   Sparkles,
   Upload,
-  Plus
+  Plus,
+  HelpCircle,
+  LogOut
 } from 'lucide-react';
 
 export const ProfilePage = () => {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { addToast } = useToast();
+  const navigate = useNavigate();
+
   const [activeTab, setActiveTab] = useState('listings'); // 'listings' | 'reviews' | 'kyc' | 'settings'
   const [userItems, setUserItems] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -241,28 +246,61 @@ export const ProfilePage = () => {
 
         {/* Tab 4: Preferences & Settings */}
         {activeTab === 'settings' && (
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-            <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Hyperlocal Search Preferences</h3>
-            <div className="space-y-3 max-w-md">
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Home Neighborhood</label>
-                <input
-                  type="text"
-                  value={user.neighborhood}
-                  readOnly
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"
-                />
-              </div>
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
+            <div className="space-y-4 max-w-md">
+              <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Hyperlocal Search Preferences</h3>
+              <div className="space-y-3">
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Home Neighborhood</label>
+                  <input
+                    type="text"
+                    value={user.neighborhood}
+                    readOnly
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"
+                  />
+                </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Default Search Radius</label>
-                <input
-                  type="text"
-                  value="2.0 km"
-                  readOnly
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"
-                />
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-600 dark:text-slate-300">Default Search Radius</label>
+                  <input
+                    type="text"
+                    value="2.0 km"
+                    readOnly
+                    className="w-full px-4 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-xs font-semibold text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700"
+                  />
+                </div>
               </div>
+            </div>
+
+            {/* Customer Support & Logout Actions */}
+            <div className="pt-4 border-t border-slate-100 dark:border-slate-800 space-y-3 max-w-md">
+              <h3 className="text-xs font-extrabold text-slate-400 uppercase tracking-wider">Account Actions & Support</h3>
+              
+              <Link
+                to="/support"
+                className="w-full p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs font-bold text-slate-900 dark:text-white flex items-center justify-between transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <HelpCircle className="w-4 h-4 text-forest-600 dark:text-emerald-400" />
+                  <span>Customer Support & FAQ Center</span>
+                </div>
+                <span>→</span>
+              </Link>
+
+              <button
+                onClick={() => {
+                  logout();
+                  addToast('Signed out of account safely', 'info');
+                  navigate('/login');
+                }}
+                className="w-full p-3.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 border border-rose-200 dark:border-rose-800/60 text-xs font-extrabold text-rose-600 dark:text-rose-400 flex items-center justify-between transition-colors cursor-pointer"
+              >
+                <div className="flex items-center gap-2.5">
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out of Account</span>
+                </div>
+                <span>→</span>
+              </button>
             </div>
           </div>
         )}

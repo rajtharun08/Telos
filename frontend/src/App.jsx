@@ -15,6 +15,7 @@ import { WalletPage } from './pages/WalletPage';
 import { AdminPage } from './pages/AdminPage';
 import { ProfilePage } from './pages/ProfilePage';
 import { LoginPage } from './pages/LoginPage';
+import { SupportPage } from './pages/SupportPage';
 
 export default function App() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/search" element={<Navigate to="/explore" replace />} />
           <Route path="/items/:id" element={<ItemDetailPage />} />
           <Route path="/login" element={<LoginPage />} />
+          <Route path="/support" element={<SupportPage />} />
 
           {/* Protected Routes — Redirect to /login if unauthenticated */}
           <Route
