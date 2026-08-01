@@ -5,6 +5,7 @@ import { MobileBottomNav } from './components/layout/MobileBottomNav';
 import { Footer } from './components/layout/Footer';
 import { PwaInstallBanner } from './components/common/PwaInstallBanner';
 import { ChatDrawer } from './components/chat/ChatDrawer';
+import { ProtectedRoute } from './components/auth/ProtectedRoute';
 
 import { ExplorePage } from './pages/ExplorePage';
 import { ItemDetailPage } from './pages/ItemDetailPage';
@@ -33,12 +34,50 @@ export default function App() {
           <Route path="/explore" element={<ExplorePage />} />
           <Route path="/search" element={<Navigate to="/explore" replace />} />
           <Route path="/items/:id" element={<ItemDetailPage />} />
-          <Route path="/create-item" element={<CreateItemPage />} />
-          <Route path="/transactions" element={<TransactionsPage />} />
-          <Route path="/wallet" element={<WalletPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
           <Route path="/login" element={<LoginPage />} />
+
+          {/* Protected Routes — Redirect to /login if unauthenticated */}
+          <Route
+            path="/create-item"
+            element={
+              <ProtectedRoute>
+                <CreateItemPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/transactions"
+            element={
+              <ProtectedRoute>
+                <TransactionsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/wallet"
+            element={
+              <ProtectedRoute>
+                <WalletPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <ProfilePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+
           <Route path="*" element={<Navigate to="/explore" replace />} />
         </Routes>
       </main>

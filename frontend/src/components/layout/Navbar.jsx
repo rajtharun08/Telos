@@ -21,13 +21,15 @@ import {
   Moon,
   MessageSquare,
   Smartphone,
-  CheckCircle2
+  CheckCircle2,
+  LogOut,
+  LogIn
 } from 'lucide-react';
 
 export const Navbar = ({ onOpenFilterSheet, onOpenChat }) => {
-  const { user, switchUser, demoUsers } = useAuth();
+  const { user, isAuthenticated, logout, switchUser, demoUsers } = useAuth();
   const { theme, toggleTheme } = useTheme();
-  const { userLocation, radiusKm, setRadiusKm } = useGeoLocation();
+  const { userLocation } = useGeoLocation();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -39,7 +41,7 @@ export const Navbar = ({ onOpenFilterSheet, onOpenChat }) => {
     { path: '/transactions', label: 'Transactions', icon: Repeat },
     { path: '/wallet', label: 'Wallet', icon: Wallet },
     { path: '/profile', label: 'My Profile', icon: User },
-    ...(user.admin ? [{ path: '/admin', label: 'Admin Queue', icon: ShieldCheck }] : []),
+    ...(user?.admin ? [{ path: '/admin', label: 'Admin Queue', icon: ShieldCheck }] : []),
   ];
 
   return (
@@ -71,7 +73,7 @@ export const Navbar = ({ onOpenFilterSheet, onOpenChat }) => {
             title="Click to adjust your neighborhood pickup location"
           >
             <MapPin className="w-3 h-3 text-forest-600 shrink-0" />
-            <span className="truncate max-w-[85px] sm:max-w-[180px]">{user.neighborhood.toUpperCase()}</span>
+            <span className="truncate max-w-[85px] sm:max-w-[180px]">{(user?.neighborhood || 'HSR LAYOUT').toUpperCase()}</span>
             <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
           </button>
 
@@ -153,79 +155,102 @@ export const Navbar = ({ onOpenFilterSheet, onOpenChat }) => {
             <span>List Item</span>
           </Link>
 
-          {/* User Persona Switcher Dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-              className="flex items-center gap-2 p-1.5 pr-3 rounded-full bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-slate-200 dark:border-slate-800"
-            >
-              <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-forest-600 text-white flex items-center justify-center font-black text-sm shadow">
-                {user.name.charAt(0)}
-              </div>
-              <div className="text-left leading-none hidden lg:block">
-                <span className="text-xs font-bold text-slate-900 dark:text-white block">{user.name.split(' ')[0]}</span>
-                <span className="text-[10px] text-forest-600 dark:text-emerald-400 font-semibold block">Verified</span>
-              </div>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
-            </button>
+          {/* User Persona Switcher Dropdown or Login Button */}
+          {isAuthenticated && user ? (
+            <div className="relative">
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center gap-2 p-1.5 pr-3 rounded-full bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors cursor-pointer border border-slate-200 dark:border-slate-800"
+              >
+                <div className="w-8 h-8 rounded-full bg-slate-900 dark:bg-forest-600 text-white flex items-center justify-center font-black text-sm shadow">
+                  {user.name.charAt(0)}
+                </div>
+                <div className="text-left leading-none hidden lg:block">
+                  <span className="text-xs font-bold text-slate-900 dark:text-white block">{user.name.split(' ')[0]}</span>
+                  <span className="text-[10px] text-forest-600 dark:text-emerald-400 font-semibold block">Verified</span>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+              </button>
 
-            {/* Persona Switcher Dropdown Panel */}
-            {isUserMenuOpen && (
-              <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-2xl border border-slate-200 dark:border-slate-800 z-50 space-y-3 animate-in fade-in slide-in-from-top-2">
-                <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
-                  <div>
-                    <p className="text-xs font-extrabold text-slate-900 dark:text-white">{user.name}</p>
-                    <p className="text-[11px] text-slate-400 truncate max-w-[180px]">{user.email}</p>
+              {/* Persona Switcher Dropdown Panel */}
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-slate-900 rounded-3xl p-4 shadow-2xl border border-slate-200 dark:border-slate-800 z-50 space-y-3 animate-in fade-in slide-in-from-top-2">
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
+                    <div>
+                      <p className="text-xs font-extrabold text-slate-900 dark:text-white">{user.name}</p>
+                      <p className="text-[11px] text-slate-400 truncate max-w-[180px]">{user.email}</p>
+                    </div>
+                    {user.admin && (
+                      <span className="text-[9px] bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full font-bold">
+                        Admin
+                      </span>
+                    )}
                   </div>
-                  {user.admin && (
-                    <span className="text-[9px] bg-purple-100 dark:bg-purple-900/60 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full font-bold">
-                      Admin
+
+                  <Link
+                    to="/profile"
+                    onClick={() => setIsUserMenuOpen(false)}
+                    className="w-full px-3 py-2.5 rounded-xl bg-forest-50 dark:bg-forest-950/50 text-forest-700 dark:text-forest-300 text-xs font-extrabold flex items-center justify-between hover:bg-forest-100 dark:hover:bg-forest-950 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <User className="w-4 h-4 text-forest-600" />
+                      <span>View Full Profile</span>
+                    </div>
+                    <span>→</span>
+                  </Link>
+
+                  <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
+                    <span className="text-[10px] font-extrabold text-slate-400 px-2 uppercase tracking-wider block">
+                      Switch Persona Demo
                     </span>
-                  )}
-                </div>
-
-                <Link
-                  to="/profile"
-                  onClick={() => setIsUserMenuOpen(false)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-forest-50 dark:bg-forest-950/50 text-forest-700 dark:text-forest-300 text-xs font-extrabold flex items-center justify-between hover:bg-forest-100 dark:hover:bg-forest-950 transition-colors"
-                >
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4 text-forest-600" />
-                    <span>View Full Profile</span>
-                  </div>
-                  <span>→</span>
-                </Link>
-
-                <div className="space-y-1.5 pt-2 border-t border-slate-100 dark:border-slate-800">
-                  <span className="text-[10px] font-extrabold text-slate-400 px-2 uppercase tracking-wider block">
-                    Switch Persona Demo
-                  </span>
-                  {demoUsers.map((u) => (
-                    <button
-                      key={u.id}
-                      onClick={() => {
-                        switchUser(u.id);
-                        setIsUserMenuOpen(false);
-                      }}
-                      className={`w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer ${
-                        u.id === user.id
-                          ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-extrabold'
-                          : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white flex items-center justify-center font-bold text-[10px]">
-                          {u.name.charAt(0)}
+                    {demoUsers.map((u) => (
+                      <button
+                        key={u.id}
+                        onClick={() => {
+                          switchUser(u.id);
+                          setIsUserMenuOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 rounded-xl text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                          u.id === user.id
+                            ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-extrabold'
+                            : 'hover:bg-slate-50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white flex items-center justify-center font-bold text-[10px]">
+                            {u.name.charAt(0)}
+                          </div>
+                          <span>{u.name}</span>
                         </div>
-                        <span>{u.name}</span>
-                      </div>
-                      {u.id === user.id && <CheckCircle2 className="w-3.5 h-3.5 text-forest-600" />}
-                    </button>
-                  ))}
+                        {u.id === user.id && <CheckCircle2 className="w-3.5 h-3.5 text-forest-600" />}
+                      </button>
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsUserMenuOpen(false);
+                      navigate('/login');
+                    }}
+                    className="w-full text-left px-3 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 text-xs font-bold flex items-center gap-2 hover:bg-rose-100 transition-colors cursor-pointer"
+                  >
+                    <LogOut className="w-4 h-4" />
+                    <span>Sign Out</span>
+                  </button>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          ) : (
+            <Link
+              to="/login"
+              className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-slate-900 dark:bg-forest-600 text-white text-xs font-extrabold shadow-md hover:bg-slate-800 transition-colors cursor-pointer"
+            >
+              <LogIn className="w-4 h-4" />
+              <span>Sign In</span>
+            </Link>
+          )}
+
         </div>
       </div>
 
