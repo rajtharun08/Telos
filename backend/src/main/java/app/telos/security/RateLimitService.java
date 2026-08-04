@@ -1,6 +1,7 @@
 package app.telos.security;
 
 import app.telos.common.RateLimitException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
@@ -17,6 +18,7 @@ public class RateLimitService {
     private final RateLimitStore store;
     private final Clock clock;
 
+    @Autowired
     public RateLimitService(RateLimitStore store) {
         this(store, Clock.systemUTC());
     }
