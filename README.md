@@ -268,7 +268,24 @@ All pre-seeded demo accounts use the standard password `demo1234`.
 
 ---
 
-## Local Setup & Development Instructions
+## 🐳 Docker Quick Start (Recommended)
+
+Run the complete full-stack application (PostGIS Spatial Database, Spring Boot Backend REST API, and React PWA Frontend via Nginx) with a single command:
+
+```bash
+docker-compose up --build
+```
+
+### Services Orchestrated
+- **`db`**: PostGIS 16 spatial database (`postgis/postgis:16-3.4-alpine`) exposed on host port `5433` (internal `5432`) with automatic health checks.
+- **`backend`**: Spring Boot REST API built via multi-stage [backend/Dockerfile](file:///d:/Telos/backend/Dockerfile), exposed on port `8080`.
+- **`frontend`**: React PWA Single Page Application built via multi-stage [frontend/Dockerfile](file:///d:/Telos/frontend/Dockerfile) and served with Nginx on port `5173`. Includes reverse-proxy configuration for `/api/*` requests.
+
+Once running, access the web app at `http://localhost:5173` and the REST API at `http://localhost:8080/api`.
+
+---
+
+## Local Setup & Development Instructions (Alternative)
 
 ### 1. Prerequisites
 Ensure the following tools are installed on your development environment:
